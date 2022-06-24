@@ -1,0 +1,6 @@
+{
+    "endpoint": {
+        "not_found": "Endpoint not found",
+        "server_error": "Unknown error processing our request"
+    }
+}
