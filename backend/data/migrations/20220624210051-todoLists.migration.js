@@ -1,8 +1,8 @@
 const DATABASE_NAME = 'todo_lists'
 
 module.exports = {
-	up: async (queryInterface, Sequelize) => {
-		await queryInterface.createTable(DATABASE_NAME, {
+	up: (queryInterface, Sequelize) => {
+		return queryInterface.createTable(DATABASE_NAME, {
 			id: {
 				allowNull: false,
 				autoIncrement: true,
@@ -24,7 +24,7 @@ module.exports = {
 			},
 		})
 	},
-	down: async queryInterface => {
-		await queryInterface.dropTable(DATABASE_NAME)
+	down: queryInterface => {
+		return queryInterface.dropTable(DATABASE_NAME)
 	},
 }
