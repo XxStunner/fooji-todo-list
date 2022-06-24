@@ -12,6 +12,18 @@ const helmet = require('helmet')
 const cors = require('cors')
 const messages = require('./config/messages.config.json')
 const config = require('./config/application.config')
+const { sequelize } = require('./data/models/index')
+/**
+ * Connect to the database and check queries.
+ */
+sequelize
+	.authenticate()
+	.then(() => {
+		console.log('Connected to MySQl successfully')
+	})
+	.catch(err => {
+		console.error('Unable to connect to the database', err)
+	})
 /**
  * Debug
  */

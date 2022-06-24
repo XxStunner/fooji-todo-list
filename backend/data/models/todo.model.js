@@ -1,17 +1,38 @@
 const Sequelize = require('sequelize')
+const { Model } = require('sequelize')
 
-module.exports = sequelize => {
-	const Todo = sequelize.define('todo', {
-		todoListId: {
-			type: Sequelize.INTEGER,
-			allowNull: false,
-			field: 'todo_list_id',
+module.exports = (sequelize) => {
+	class Todo extends Model {
+		/**
+		 * Helper method for defining associations.
+		 * This method is not a part of Sequelize lifecycle.
+		 * The `models/index` file will call this method automatically.
+		 */
+		static associate(models) {
+			// define association here
+			Todo.belongsTo(models.TodoList, {
+				foreignKey: 'todo_list_id',
+			})
+		}
+	}
+
+	Todo.init(
+		{
+			todoListId: {
+				type: Sequelize.INTEGER,
+				allowNull: false,
+				field: 'todo_list_id',
+			},
+			content: {
+				type: Sequelize.STRING,
+				allowNull: false,
+			},
 		},
-		content: {
-			type: Sequelize.STRING,
-			max: 255,
-		},
-	})
+		{
+			sequelize,
+			modelName: 'User',
+		}
+	)
 
 	return Todo
 }
