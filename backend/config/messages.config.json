@@ -1,6 +1,12 @@
 {
     "endpoint": {
-        "not_found": "Endpoint not found",
-        "server_error": "Unknown error processing our request"
+        "not_found": "Endpoint not found.",
+        "server_error": "Unknown error processing your request.",
+        "input_error": "Unknown error processing your request, verify your input data and try again."
+    },
+    "auth": {
+        "wrong_credentials": "Username or password incorrect",
+        "no_permission": "You don't have permission to perform this action",
+        "duplicated_username": "Duplicated username, please change"
     }
 }

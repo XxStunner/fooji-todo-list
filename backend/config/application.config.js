@@ -7,4 +7,7 @@ module.exports = {
 	bcrypt: {
 		saltRounds: 16,
 	},
+	sentry: {
+		trackingLink: '',
+	},
 }
