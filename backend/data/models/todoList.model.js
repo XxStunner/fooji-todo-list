@@ -59,6 +59,7 @@ module.exports = sequelize => {
 			title: {
 				type: Sequelize.STRING,
 				allowNull: false,
+				min: 3,
 				max: 60,
 			},
 			createdAt: {
