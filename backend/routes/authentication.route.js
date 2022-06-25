@@ -1,12 +1,15 @@
 const express = require('express')
-const bcrypt = require('bcrypt')
 const router = express.Router()
+const passport = require('passport')
+const bcrypt = require('bcrypt')
 const validateFieldsMiddleware = require('../middlewares/validateFields.middleware')
 const userMiddleware = require('../middlewares/user.middleware')
+const authenticationMiddleware = require('../middlewares/authentication.middleware')
 const userFieldsValidator = require('../data/validators/user.validator')
 const messages = require('../config/messages.config.json')
 const { sentryCaptureException } = require('../modules/sentry/sentry.module')
 const { User } = require('../data/models')
+const config = require('../config/application.config')
 
 /**
  * @swagger
@@ -25,18 +28,10 @@ const { User } = require('../data/models')
  *         password:
  *           type: string
  *           description: The user's password.
- *           example: 12346
+ *           example: 123456
  *     AuthenticationResponse:
  *       type: object
- *       properties:
- *         authToken:
- *           type: string
- *           description: Token to authenticate the user
- *         refreshToken:
- *           type: string
- *           description: Token to refresh the authToken
- *         user:
- *           $ref: '#/components/schemas/User'
+ *       $ref: '#/components/schemas/User'
  */
 
 /**
@@ -54,41 +49,26 @@ const { User } = require('../data/models')
  *             $ref: '#/components/schemas/AuthenticationBody'
  *     responses:
  *       200:
- *         description: User logged successfully, returns the authenticated user and a JWT token to use in future requests.
+ *         description: User logged successfully, returns the authenticated user.
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/AuthenticationResponse'
  */
-router.post('/login', validateFieldsMiddleware(userFieldsValidator), async (req, res) => {
-	try {
-		const user = await User.findOne({
-			where: {
-				username: req.body.username,
-			},
-		})
+router.post(
+	'/login',
+	validateFieldsMiddleware(userFieldsValidator),
+	authenticationMiddleware.authenticateUser,
+	async (req, res) => {
+		try {
+			res.send(req.user)
+		} catch (err) {
+			sentryCaptureException(err)
 
-		if (!user) {
-			return res.status(400).send({ message: messages.auth.wrong_credentials })
+			res.status(500).send({ message: messages.endpoint.server_error })
 		}
-
-		const isPasswordValid = bcrypt.compare(req.body.password, user.password)
-
-		if (!isPasswordValid) {
-			return res.status(400).send({ message: messages.auth.wrong_credentials })
-		}
-
-		/**
-		 * @todo delete the password property from user and generate the jwt.
-		 */
-
-		res.send({ user })
-	} catch (err) {
-		sentryCaptureException(err)
-
-		res.status(500).send({ message: messages.endpoint.server_error })
 	}
-})
+)
 
 /**
  * @swagger
@@ -105,7 +85,7 @@ router.post('/login', validateFieldsMiddleware(userFieldsValidator), async (req,
  *             $ref: '#/components/schemas/AuthenticationBody'
  *     responses:
  *       200:
- *         description: User logged successfully, returns the authenticated user and a JWT token to use in future requests.
+ *         description: User logged successfully, returns the authenticated user.
  *         content:
  *           application/json:
  *             schema:
@@ -117,16 +97,19 @@ router.post(
 	userMiddleware.checkDuplicatedUsername,
 	async (req, res) => {
 		try {
-			const user = User.create({
+			const result = await User.create({
 				username: req.body.username,
-				password: req.body.password,
+				password: await bcrypt.hash(req.body.password, config.bcrypt.saltRounds),
 			})
 
-			/**
-			 * @todo delete the password property from user and generate the jwt.
-			 */
+			const user = result.get({ plain: true })
 
-			 res.send({ user })
+			passport.authenticate('local', () => res.send(user))({
+				body: {
+					username: user.username,
+					password: user.passport,
+				},
+			})
 		} catch (err) {
 			sentryCaptureException(err)
 

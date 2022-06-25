@@ -5,7 +5,7 @@ module.exports = {
 		clientUrl: 'http://localhost:3000',
 	},
 	bcrypt: {
-		saltRounds: 16,
+		saltRounds: 6,
 	},
 	sentry: {
 		trackingLink: '',
@@ -19,5 +19,11 @@ module.exports = {
 			},
 		},
 		apis: ['./routes/*.js', './data/models/*.model.js'],
+	},
+	session: {
+		secret: 'vuvYaeiUh$CwlWuVDfqKNSvtwq60SCkPL3h!u#',
+		resave: false,
+		saveUninitialized: true,
+		cookie: { secure: false },
 	},
 }
