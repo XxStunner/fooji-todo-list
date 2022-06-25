@@ -1,4 +1,4 @@
-const { validateFields } = require('../utils/validation.utils')
+const { validateFields } = require('../modules/validation/validation.module')
 const messages = require('../config/messages.config.json')
 
 module.exports = (rules, customMessages) => {

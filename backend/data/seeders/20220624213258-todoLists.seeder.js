@@ -15,14 +15,20 @@ module.exports = {
 			{
 				user_id: 1,
 				title: "todo's",
+				created_at: new Date(),
+				updated_at: new Date(),
 			},
 			{
 				user_id: 1,
 				title: 'doing',
+				created_at: new Date(),
+				updated_at: new Date(),
 			},
 			{
 				user_id: 1,
 				title: 'done',
+				created_at: new Date(),
+				updated_at: new Date(),
 			},
 		])
 	},

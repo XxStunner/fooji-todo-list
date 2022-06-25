@@ -1,7 +1,35 @@
 const Sequelize = require('sequelize')
 const { Model } = require('sequelize')
 
-module.exports = (sequelize) => {
+module.exports = sequelize => {
+	/**
+	 * @swagger
+	 * components:
+	 *   schemas:
+	 *     User:
+	 *       type: object
+	 *       properties:
+	 *         id:
+	 *           type: integer
+	 *           description: The user ID.
+	 *           example: 0
+	 *         username:
+	 *           type: string
+	 *           description: The user's username.
+	 *           example: test
+	 *         password:
+	 *           type: string
+	 *           description: The user's password.
+	 *           example: 123456
+	 *         createdAt:
+	 *           type: string
+	 *           description: The date where the user was created.
+	 *           example: 2022-06-25 00:54:25
+	 *         updatedAt:
+	 *           type: string
+	 *           description: The last time where the user was modified.
+	 *           example: 2022-06-25 00:54:25
+	 */
 	class User extends Model {
 		/**
 		 * Helper method for defining associations.
@@ -29,6 +57,16 @@ module.exports = (sequelize) => {
 			password: {
 				type: Sequelize.STRING,
 				allowNull: false,
+			},
+			createdAt: {
+				field: 'created_at',
+				type: Sequelize.DATE,
+				defaultValue: Sequelize.NOW,
+			},
+			updatedAt: {
+				field: 'updated_at',
+				type: Sequelize.DATE,
+				defaultValue: Sequelize.NOW,
 			},
 		},
 		{

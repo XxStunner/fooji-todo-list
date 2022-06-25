@@ -1,7 +1,35 @@
 const Sequelize = require('sequelize')
 const { Model } = require('sequelize')
 
-module.exports = (sequelize) => {
+module.exports = sequelize => {
+	/**
+	 * @swagger
+	 * components:
+	 *   schemas:
+	 *     Todo:
+	 *       type: object
+	 *       properties:
+	 *         id:
+	 *           type: integer
+	 *           description: The user ID.
+	 *           example: 1
+	 *         todoListId:
+	 *           type: integer
+	 *           description: The TodoList ID.
+	 *           example: 1
+	 *         content:
+	 *           type: string
+	 *           description: The content of the todo.
+	 *           example: Study solidity
+	 *         createdAt:
+	 *           type: string
+	 *           description: The date where the todo was created.
+	 *           example: 2022-06-25 00:54:25
+	 *         updatedAt:
+	 *           type: string
+	 *           description: The last time where the todo was modified.
+	 *           example: 2022-06-25 00:54:25
+	 */
 	class Todo extends Model {
 		/**
 		 * Helper method for defining associations.
@@ -26,6 +54,16 @@ module.exports = (sequelize) => {
 			content: {
 				type: Sequelize.STRING,
 				allowNull: false,
+			},
+			createdAt: {
+				field: 'created_at',
+				type: Sequelize.DATE,
+				defaultValue: Sequelize.NOW,
+			},
+			updatedAt: {
+				field: 'updated_at',
+				type: Sequelize.DATE,
+				defaultValue: Sequelize.NOW,
 			},
 		},
 		{

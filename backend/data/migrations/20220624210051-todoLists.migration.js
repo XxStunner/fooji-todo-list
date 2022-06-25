@@ -22,6 +22,14 @@ module.exports = {
 				type: Sequelize.STRING,
 				max: 60,
 			},
+			created_at: {
+				allowNull: false,
+				type: Sequelize.DATE,
+			},
+			updated_at: {
+				allowNull: false,
+				type: Sequelize.DATE,
+			},
 		})
 	},
 	down: queryInterface => {

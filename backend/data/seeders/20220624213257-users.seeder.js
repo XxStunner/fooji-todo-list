@@ -17,6 +17,8 @@ module.exports = {
 			{
 				username: 'test',
 				password: await bcrypt.hash('123456', config.bcrypt.saltRounds),
+				created_at: new Date(),
+				updated_at: new Date(),
 			},
 		])
 	},

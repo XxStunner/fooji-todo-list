@@ -8,6 +8,58 @@ const messages = require('../config/messages.config.json')
 const { sentryCaptureException } = require('../modules/sentry/sentry.module')
 const { User } = require('../data/models')
 
+/**
+ * @swagger
+ * tags:
+ *   name: Authentication
+ *   description: Handle all the authentication of the API.
+ * components:
+ *   schemas:
+ *     AuthenticationBody:
+ *       type: object
+ *       properties:
+ *         username:
+ *           type: string
+ *           description: The user's name.
+ *           example: test
+ *         password:
+ *           type: string
+ *           description: The user's password.
+ *           example: 12346
+ *     AuthenticationResponse:
+ *       type: object
+ *       properties:
+ *         authToken:
+ *           type: string
+ *           description: Token to authenticate the user
+ *         refreshToken:
+ *           type: string
+ *           description: Token to refresh the authToken
+ *         user:
+ *           $ref: '#/components/schemas/User'
+ */
+
+/**
+ * @swagger
+ * /auth/login:
+ *   post:
+ *     summary: Login.
+ *     description: Authenticate the user.
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/AuthenticationBody'
+ *     responses:
+ *       200:
+ *         description: User logged successfully, returns the authenticated user and a JWT token to use in future requests.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AuthenticationResponse'
+ */
 router.post('/login', validateFieldsMiddleware(userFieldsValidator), async (req, res) => {
 	try {
 		const user = await User.findOne({
@@ -30,7 +82,7 @@ router.post('/login', validateFieldsMiddleware(userFieldsValidator), async (req,
 		 * @todo delete the password property from user and generate the jwt.
 		 */
 
-		return user
+		res.send({ user })
 	} catch (err) {
 		sentryCaptureException(err)
 
@@ -38,6 +90,27 @@ router.post('/login', validateFieldsMiddleware(userFieldsValidator), async (req,
 	}
 })
 
+/**
+ * @swagger
+ * /auth/register:
+ *   post:
+ *     summary: Create an user.
+ *     description: Authenticate the user.
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/AuthenticationBody'
+ *     responses:
+ *       200:
+ *         description: User logged successfully, returns the authenticated user and a JWT token to use in future requests.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AuthenticationResponse'
+ */
 router.post(
 	'/register',
 	validateFieldsMiddleware(userFieldsValidator),
@@ -53,7 +126,7 @@ router.post(
 			 * @todo delete the password property from user and generate the jwt.
 			 */
 
-			return user
+			 res.send({ user })
 		} catch (err) {
 			sentryCaptureException(err)
 
