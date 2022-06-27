@@ -10,7 +10,6 @@ const messages = require('../config/messages.config.json')
 const { sentryCaptureException } = require('../modules/sentry/sentry.module')
 const { User } = require('../data/models')
 const config = require('../config/application.config')
-
 /**
  * @swagger
  * tags:

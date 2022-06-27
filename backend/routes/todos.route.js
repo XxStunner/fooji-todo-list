@@ -3,33 +3,37 @@ const passport = require('passport')
 const { sentryCaptureException } = require('../modules/sentry/sentry.module')
 const router = express.Router()
 const messages = require('../config/messages.config.json')
-const { TodoList, Todo } = require('../data/models')
+const { Todo } = require('../data/models')
+const todoMiddleware = require('../middlewares/todo.middleware')
 const todoListMiddleware = require('../middlewares/todoList.middleware')
 const validateFieldsMiddleware = require('../middlewares/validateFields.middleware')
-const todoListFieldsValidator = require('../data/validators/todoList.validator')
+const todoFieldsValidator = require('../data/validators/todo.validator')
 /**
  * @swagger
  * tags:
- *   name: TodoLists
- *   description: CRUD for the todoLists.
+ *   name: Todos
+ *   description: CRUD for the todos.
  * components:
  *   schemas:
- *     TodoListBody:
+ *     TodoBody:
  *       type: object
  *       properties:
+ *         todoListId:
+ *           type: integer
+ *           description: The id of the todoList.
+ *           example: test
  *         title:
  *           type: string
- *           description: The title of the todoList.
- *           example: Doing
+ *           description: The title of the todo.
+ *           example: Study solana
  */
 
 /**
  * @swagger
- * /todo-lists/:
+ * /todos/:
  *   get:
- *     summary: Return all the todoLists created by the logged user.
- *     description: Return all the todoLists created by the logged user.
- *     tags: [TodoLists]
+ *     summary: Return all the todos created by the logged user.
+ *     tags: [Todos]
  *     parameters:
  *       - in: currentPage
  *         name: currentPage
@@ -41,31 +45,25 @@ const todoListFieldsValidator = require('../data/validators/todoList.validator')
  *         description: Limit of items per result. 
  *     responses:
  *       200:
- *         description: Array of todoLists.
+ *         description: Array of todos.
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/TodoList'
+ *                 $ref: '#/components/schemas/Todo'
  */
 router.get('/', passport.authorize('local'), async (req, res) => {
 	try {
-		const todoLists = await TodoList.findAndCountAll({
+		const todos = await Todo.findAndCountAll({
 			where: {
-				user_id: req.user.id,
+				userId: req.user.id,
 			},
 			offset: Number.isInteger(req.query.currentPage) ? Number(req.query.currentPage) : 0,
 			limit: Number.isInteger(req.query.limit) ? Number(req.query.limit) : 10,
-			include: [
-				{
-					model: Todo,
-					as: 'todos',
-				},
-			],
 		})
 
-		res.send(todoLists)
+		res.send(todos)
 	} catch (err) {
 		sentryCaptureException(err)
 
@@ -74,60 +72,67 @@ router.get('/', passport.authorize('local'), async (req, res) => {
 })
 /**
  * @swagger
- * /todo-lists/:
+ * /todos/:
  *   post:
- *     summary: Create a todoList and set the logged user as the owner of it.
- *     tags: [TodoLists]
+ *     summary: Create the todo and set the logged user as the owner of it.
+ *     tags: [Todos]
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/TodoListBody'
+ *             $ref: '#/components/schemas/TodoBody'
  *     responses:
  *       200:
- *         description: Array of todoLists.
+ *         description: The created todo.
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/TodoList'
+ *               $ref: '#/components/schemas/Todo'
  */
-router.post('/', validateFieldsMiddleware(todoListFieldsValidator), passport.authorize('local'), async (req, res) => {
-	try {
-		const todoList = await TodoList.create({
-			userId: req.user.id,
-			title: req.body.title,
-		})
+router.post(
+	'/',
+	validateFieldsMiddleware(todoFieldsValidator),
+	todoListMiddleware.getTodoList,
+	passport.authorize('local'),
+	async (req, res) => {
+		try {
+			const todo = await Todo.create({
+				userId: req.user.id,
+				todoListId: req.body.todoListId,
+				title: req.body.title,
+			})
 
-		res.send(todoList)
-	} catch (err) {
-		sentryCaptureException(err)
+			res.send(todo)
+		} catch (err) {
+			sentryCaptureException(err)
 
-		res.status(500).send({ message: messages.endpoint.server_error })
+			res.status(500).send({ message: messages.endpoint.server_error })
+		}
 	}
-})
+)
 /**
  * @swagger
- * /todo-lists/{id}:
+ * /todos/{id}:
  *   get:
- *     summary: Get a todoList by it's id.
- *     tags: [TodoLists]
+ *     summary: Get a todo by it's id.
+ *     tags: [Todos]
  *     responses:
  *       200:
- *         description: Array of todoLists.
+ *         description: Todo object.
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/TodoList'
+ *               $ref: '#/components/schemas/Todo'
  */
 router.get(
 	'/:id',
 	passport.authorize('local'),
-	todoListMiddleware.getTodoList,
-	todoListMiddleware.authorizeTodoListEdit,
+	todoMiddleware.getTodo,
+	todoMiddleware.authorizeTodoEdit,
 	async (req, res) => {
 		try {
-			res.send(req.todoList)
+			res.send(req.todo)
 		} catch (err) {
 			sentryCaptureException(err)
 
@@ -137,37 +142,37 @@ router.get(
 )
 /**
  * @swagger
- * /todo-lists/{id}:
+ * /todos/{id}:
  *   put:
- *     summary: Update a todoList.
- *     tags: [TodoLists]
+ *     summary: Update the todo.
+ *     tags: [Todos]
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/TodoListBody'
+ *             $ref: '#/components/schemas/TodoBody'
  *     responses:
  *       200:
- *         description: Array of todoLists.
+ *         description: The updated todo.
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/TodoList'
+ *               $ref: '#/components/schemas/Todo'
  */
 router.put(
 	'/:id',
-	validateFieldsMiddleware(todoListFieldsValidator),
+	validateFieldsMiddleware(todoFieldsValidator),
 	passport.authorize('local'),
-	todoListMiddleware.getTodoList,
-	todoListMiddleware.authorizeTodoListEdit,
+	todoMiddleware.getTodo,
+	todoMiddleware.authorizeTodoEdit,
 	async (req, res) => {
 		try {
-			req.todoList.title = req.body.title
+			req.todo.title = req.body.title
 
-			await req.todoList.save()
+			await req.todo.save()
 
-			res.send(req.todoList)
+			res.send(req.todo)
 		} catch (err) {
 			sentryCaptureException(err)
 
@@ -177,22 +182,22 @@ router.put(
 )
 /**
  * @swagger
- * /todo-lists/{id}:
+ * /todos/{id}:
  *   delete:
- *     summary: Delete a todoList and all the todos that belongs to the list.
- *     tags: [TodoLists]
+ *     summary: Delete the todo.
+ *     tags: [Todos]
  *     responses:
  *       200:
- *         description: Success response indicating that the todoList has been deleted.
+ *         description: Success response indicating that the todo has been deleted.
  */
 router.delete(
 	'/:id',
 	passport.authorize('local'),
-	todoListMiddleware.getTodoList,
-	todoListMiddleware.authorizeTodoListEdit,
+	todoMiddleware.getTodo,
+	todoMiddleware.authorizeTodoEdit,
 	async (req, res) => {
 		try {
-			await req.todoList.destroy()
+			await req.todo.destroy()
 
 			res.sendStatus(200)
 		} catch (err) {

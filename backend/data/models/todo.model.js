@@ -17,9 +17,9 @@ module.exports = sequelize => {
 	 *           type: integer
 	 *           description: The TodoList ID.
 	 *           example: 1
-	 *         content:
+	 *         title:
 	 *           type: string
-	 *           description: The content of the todo.
+	 *           description: The title of the todo.
 	 *           example: Study solidity
 	 *         createdAt:
 	 *           type: string
@@ -51,7 +51,7 @@ module.exports = sequelize => {
 				allowNull: false,
 				field: 'todo_list_id',
 			},
-			content: {
+			title: {
 				type: Sequelize.STRING,
 				allowNull: false,
 			},
