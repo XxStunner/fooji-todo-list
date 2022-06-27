@@ -1,8 +1,4 @@
-# Fooji TodoList test case
-
-This is a test case for https://fooji.com.
-
-# How to install the project
+# How to install and run the back-end 
 
 This backend it's a standard express.js setup, in order to run it you need Node.JS 16.15.1 installed (https://nodejs.org/download/release/v16.15.1/) or if you have nvm, type the following command on the /backend directory:
 
@@ -34,7 +30,6 @@ All the tests are inside test/routes folder, as I didn't have enough time to wri
 
 ```
 npm test
-
 ```
 
 # Documentation
