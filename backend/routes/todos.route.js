@@ -29,7 +29,7 @@ const authorizationMiddleware = require('../middlewares/authorization.middleware
 
 /**
  * @swagger
- * /todos/:
+ * /todos:
  *   get:
  *     summary: Return all the todos created by the logged user.
  *     tags: [Todos]
@@ -71,7 +71,7 @@ router.get('/', authorizationMiddleware.isAuthenticated, async (req, res) => {
 })
 /**
  * @swagger
- * /todos/:
+ * /todos:
  *   post:
  *     summary: Create the todo and set the logged user as the owner of it.
  *     tags: [Todos]
@@ -125,7 +125,7 @@ router.post(
  *               $ref: '#/components/schemas/Todo'
  */
 router.get(
-	'/:id',
+	':id',
 	authorizationMiddleware.isAuthenticated,
 	todoMiddleware.getTodo,
 	todoMiddleware.authorizeTodoEdit,
@@ -160,7 +160,7 @@ router.get(
  *               $ref: '#/components/schemas/Todo'
  */
 router.put(
-	'/:id',
+	':id',
 	validateFieldsMiddleware(todoFieldsValidator),
 	authorizationMiddleware.isAuthenticated,
 	todoMiddleware.getTodo,
@@ -192,7 +192,7 @@ router.put(
  *         description: Success response indicating that the todo has been deleted.
  */
 router.delete(
-	'/:id',
+	':id',
 	authorizationMiddleware.isAuthenticated,
 	todoMiddleware.getTodo,
 	todoMiddleware.authorizeTodoEdit,

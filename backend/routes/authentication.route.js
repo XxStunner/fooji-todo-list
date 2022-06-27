@@ -1,10 +1,10 @@
 const express = require('express')
 const router = express.Router()
-const passport = require('passport')
 const validateFieldsMiddleware = require('../middlewares/validateFields.middleware')
 const userMiddleware = require('../middlewares/user.middleware')
 const authenticationMiddleware = require('../middlewares/authentication.middleware')
 const userFieldsValidator = require('../data/validators/user.validator')
+const authorizationMiddleware = require('../middlewares/authorization.middleware')
 const messages = require('../config/messages.config.json')
 const { sentryCaptureException } = require('../modules/sentry/sentry.module')
 const { User } = require('../data/models')
@@ -36,7 +36,6 @@ const { User } = require('../data/models')
  * /auth/login:
  *   post:
  *     summary: Login.
- *     description: Authenticate the user.
  *     tags: [Authentication]
  *     requestBody:
  *       required: true
@@ -66,13 +65,11 @@ router.post(
 		}
 	}
 )
-
 /**
  * @swagger
  * /auth/register:
  *   post:
  *     summary: Create an user.
- *     description: Authenticate the user.
  *     tags: [Authentication]
  *     requestBody:
  *       required: true
@@ -115,5 +112,22 @@ router.post(
 		}
 	}
 )
+/**
+ * @swagger
+ * /auth/me:
+ *   get:
+ *     summary: Return the authenticated user.
+ *     tags: [Authentication]
+ *     responses:
+ *       200:
+ *         description: The object of the authenticated user.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AuthenticationResponse'
+ */
+router.get('/me', authorizationMiddleware.isAuthenticated, () => {
+	res.send(req.user)
+})
 
 module.exports = router

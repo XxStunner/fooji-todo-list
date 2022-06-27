@@ -25,7 +25,7 @@ const authorizationMiddleware = require('../middlewares/authorization.middleware
 
 /**
  * @swagger
- * /todo-lists/:
+ * /todo-lists:
  *   get:
  *     summary: Return all the todoLists created by the logged user.
  *     description: Return all the todoLists created by the logged user.
@@ -74,7 +74,7 @@ router.get('/', authorizationMiddleware.isAuthenticated, async (req, res) => {
 })
 /**
  * @swagger
- * /todo-lists/:
+ * /todo-lists:
  *   post:
  *     summary: Create a todoList and set the logged user as the owner of it.
  *     tags: [TodoLists]
@@ -126,7 +126,7 @@ router.post(
  *               $ref: '#/components/schemas/TodoList'
  */
 router.get(
-	'/:id',
+	':id',
 	authorizationMiddleware.isAuthenticated,
 	todoListMiddleware.getTodoList,
 	todoListMiddleware.authorizeTodoListEdit,
@@ -161,7 +161,7 @@ router.get(
  *               $ref: '#/components/schemas/TodoList'
  */
 router.put(
-	'/:id',
+	':id',
 	validateFieldsMiddleware(todoListFieldsValidator),
 	authorizationMiddleware.isAuthenticated,
 	todoListMiddleware.getTodoList,
@@ -191,7 +191,7 @@ router.put(
  *         description: Success response indicating that the todoList has been deleted.
  */
 router.delete(
-	'/:id',
+	':id',
 	authorizationMiddleware.isAuthenticated,
 	todoListMiddleware.getTodoList,
 	todoListMiddleware.authorizeTodoListEdit,
