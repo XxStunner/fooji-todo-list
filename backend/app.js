@@ -14,21 +14,11 @@ const passport = require('passport')
 const session = require('express-session')
 const messages = require('./config/messages.config.json')
 const config = require('./config/application.config')
-const { sequelize } = require('./data/models/index')
 const AuthController = require('./routes/authentication.route')
 const DocumentationController = require('./routes/documentation.route')
+const TodoListsController = require('./routes/todoLists.route')
+const TodosController = require('./routes/todos.route')
 const passportLocalModule = require('./modules/authentication/passportLocal.module')
-/**
- * Connect to the database and check queries.
- */
-sequelize
-	.authenticate()
-	.then(() => {
-		console.log('Connected to MySQl successfully')
-	})
-	.catch(err => {
-		console.error('Unable to connect to the database', err)
-	})
 /**
  * Debug
  */
@@ -72,6 +62,8 @@ passportLocalModule.setupPassport(passport)
  */
 app.use('/auth', AuthController)
 app.use('/docs', DocumentationController)
+app.use('/todo-lists', TodoListsController)
+app.use('/todos', TodosController)
 /**
  * Handle 404 requests.
  */

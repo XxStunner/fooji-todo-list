@@ -1,6 +1,7 @@
 module.exports = {
 	app: {
 		isDev: process.env.NODE_ENV !== 'production',
+		isTest: process.env.NODE_ENV === 'test',
 		port: process.env.PORT || 5000,
 		clientUrl: 'http://localhost:3000',
 	},

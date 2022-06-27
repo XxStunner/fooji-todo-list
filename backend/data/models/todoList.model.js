@@ -40,6 +40,7 @@ module.exports = sequelize => {
 			// define association here
 			TodoList.belongsTo(models.User, {
 				foreignKey: 'user_id',
+				onDelete: 'CASCADE',
 			})
 
 			TodoList.hasMany(models.Todo, {
@@ -52,9 +53,9 @@ module.exports = sequelize => {
 	TodoList.init(
 		{
 			userId: {
+				field: 'user_id',
 				type: Sequelize.INTEGER,
 				allowNull: false,
-				field: 'user_id',
 			},
 			title: {
 				type: Sequelize.STRING,
@@ -75,7 +76,7 @@ module.exports = sequelize => {
 		},
 		{
 			sequelize,
-			modelName: 'User',
+			modelName: 'TodoList',
 		}
 	)
 

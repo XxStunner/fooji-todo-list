@@ -5,6 +5,20 @@ const messages = require('../../config/messages.config.json')
 
 module.exports = {
 	setupPassport: passport => {
+		passport.serializeUser((user, done) => {
+			done(null, user.id)
+		})
+
+		passport.deserializeUser(async (userId, done) => {
+			const user = await User.findOne({
+				where: {
+					id: userId,
+				},
+			})
+
+			done(null, user)
+		})
+
 		passport.use(
 			new LocalStrategy(async (username, password, done) => {
 				try {

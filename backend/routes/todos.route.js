@@ -1,13 +1,12 @@
 const express = require('express')
-const passport = require('passport')
 const { sentryCaptureException } = require('../modules/sentry/sentry.module')
 const router = express.Router()
 const messages = require('../config/messages.config.json')
 const { Todo } = require('../data/models')
 const todoMiddleware = require('../middlewares/todo.middleware')
-const todoListMiddleware = require('../middlewares/todoList.middleware')
 const validateFieldsMiddleware = require('../middlewares/validateFields.middleware')
 const todoFieldsValidator = require('../data/validators/todo.validator')
+const authorizationMiddleware = require('../middlewares/authorization.middleware')
 /**
  * @swagger
  * tags:
@@ -42,7 +41,7 @@ const todoFieldsValidator = require('../data/validators/todo.validator')
  *       - in: limit
  *         name: limit
  *         type: integer
- *         description: Limit of items per result. 
+ *         description: Limit of items per result.
  *     responses:
  *       200:
  *         description: Array of todos.
@@ -53,11 +52,11 @@ const todoFieldsValidator = require('../data/validators/todo.validator')
  *               items:
  *                 $ref: '#/components/schemas/Todo'
  */
-router.get('/', passport.authorize('local'), async (req, res) => {
+router.get('/', authorizationMiddleware.isAuthenticated, async (req, res) => {
 	try {
 		const todos = await Todo.findAndCountAll({
 			where: {
-				userId: req.user.id,
+				user_id: req.user.id,
 			},
 			offset: Number.isInteger(req.query.currentPage) ? Number(req.query.currentPage) : 0,
 			limit: Number.isInteger(req.query.limit) ? Number(req.query.limit) : 10,
@@ -93,8 +92,8 @@ router.get('/', passport.authorize('local'), async (req, res) => {
 router.post(
 	'/',
 	validateFieldsMiddleware(todoFieldsValidator),
-	todoListMiddleware.getTodoList,
-	passport.authorize('local'),
+	authorizationMiddleware.isAuthenticated,
+	todoMiddleware.checkOwnershipOfTodoList,
 	async (req, res) => {
 		try {
 			const todo = await Todo.create({
@@ -127,7 +126,7 @@ router.post(
  */
 router.get(
 	'/:id',
-	passport.authorize('local'),
+	authorizationMiddleware.isAuthenticated,
 	todoMiddleware.getTodo,
 	todoMiddleware.authorizeTodoEdit,
 	async (req, res) => {
@@ -163,11 +162,13 @@ router.get(
 router.put(
 	'/:id',
 	validateFieldsMiddleware(todoFieldsValidator),
-	passport.authorize('local'),
+	authorizationMiddleware.isAuthenticated,
 	todoMiddleware.getTodo,
 	todoMiddleware.authorizeTodoEdit,
+	todoMiddleware.checkOwnershipOfTodoList,
 	async (req, res) => {
 		try {
+			req.todo.todoListId = req.body.todoListId
 			req.todo.title = req.body.title
 
 			await req.todo.save()
@@ -192,7 +193,7 @@ router.put(
  */
 router.delete(
 	'/:id',
-	passport.authorize('local'),
+	authorizationMiddleware.isAuthenticated,
 	todoMiddleware.getTodo,
 	todoMiddleware.authorizeTodoEdit,
 	async (req, res) => {

@@ -10,9 +10,15 @@ module.exports = {
 				})
 			}
 
-			req.user = user
+			req.login(user, err => {
+				if (err) {
+					return res.status(403).send({
+						message: messages.auth.wrong_credentials,
+					})
+				}
 
-			next()
+				next()
+			})
 		})(req, res, next)
 	},
 }

@@ -1,5 +1,4 @@
 const express = require('express')
-const passport = require('passport')
 const { sentryCaptureException } = require('../modules/sentry/sentry.module')
 const router = express.Router()
 const messages = require('../config/messages.config.json')
@@ -7,6 +6,7 @@ const { TodoList, Todo } = require('../data/models')
 const todoListMiddleware = require('../middlewares/todoList.middleware')
 const validateFieldsMiddleware = require('../middlewares/validateFields.middleware')
 const todoListFieldsValidator = require('../data/validators/todoList.validator')
+const authorizationMiddleware = require('../middlewares/authorization.middleware')
 /**
  * @swagger
  * tags:
@@ -38,7 +38,7 @@ const todoListFieldsValidator = require('../data/validators/todoList.validator')
  *       - in: limit
  *         name: limit
  *         type: integer
- *         description: Limit of items per result. 
+ *         description: Limit of items per result.
  *     responses:
  *       200:
  *         description: Array of todoLists.
@@ -49,7 +49,7 @@ const todoListFieldsValidator = require('../data/validators/todoList.validator')
  *               items:
  *                 $ref: '#/components/schemas/TodoList'
  */
-router.get('/', passport.authorize('local'), async (req, res) => {
+router.get('/', authorizationMiddleware.isAuthenticated, async (req, res) => {
 	try {
 		const todoLists = await TodoList.findAndCountAll({
 			where: {
@@ -92,20 +92,25 @@ router.get('/', passport.authorize('local'), async (req, res) => {
  *             schema:
  *               $ref: '#/components/schemas/TodoList'
  */
-router.post('/', validateFieldsMiddleware(todoListFieldsValidator), passport.authorize('local'), async (req, res) => {
-	try {
-		const todoList = await TodoList.create({
-			userId: req.user.id,
-			title: req.body.title,
-		})
+router.post(
+	'/',
+	validateFieldsMiddleware(todoListFieldsValidator),
+	authorizationMiddleware.isAuthenticated,
+	async (req, res) => {
+		try {
+			const todoList = await TodoList.create({
+				userId: req.user.id,
+				title: req.body.title,
+			})
 
-		res.send(todoList)
-	} catch (err) {
-		sentryCaptureException(err)
+			res.send(todoList)
+		} catch (err) {
+			sentryCaptureException(err)
 
-		res.status(500).send({ message: messages.endpoint.server_error })
+			res.status(500).send({ message: messages.endpoint.server_error })
+		}
 	}
-})
+)
 /**
  * @swagger
  * /todo-lists/{id}:
@@ -122,7 +127,7 @@ router.post('/', validateFieldsMiddleware(todoListFieldsValidator), passport.aut
  */
 router.get(
 	'/:id',
-	passport.authorize('local'),
+	authorizationMiddleware.isAuthenticated,
 	todoListMiddleware.getTodoList,
 	todoListMiddleware.authorizeTodoListEdit,
 	async (req, res) => {
@@ -158,7 +163,7 @@ router.get(
 router.put(
 	'/:id',
 	validateFieldsMiddleware(todoListFieldsValidator),
-	passport.authorize('local'),
+	authorizationMiddleware.isAuthenticated,
 	todoListMiddleware.getTodoList,
 	todoListMiddleware.authorizeTodoListEdit,
 	async (req, res) => {
@@ -187,7 +192,7 @@ router.put(
  */
 router.delete(
 	'/:id',
-	passport.authorize('local'),
+	authorizationMiddleware.isAuthenticated,
 	todoListMiddleware.getTodoList,
 	todoListMiddleware.authorizeTodoListEdit,
 	async (req, res) => {

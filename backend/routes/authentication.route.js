@@ -1,7 +1,6 @@
 const express = require('express')
 const router = express.Router()
 const passport = require('passport')
-const bcrypt = require('bcrypt')
 const validateFieldsMiddleware = require('../middlewares/validateFields.middleware')
 const userMiddleware = require('../middlewares/user.middleware')
 const authenticationMiddleware = require('../middlewares/authentication.middleware')
@@ -9,7 +8,6 @@ const userFieldsValidator = require('../data/validators/user.validator')
 const messages = require('../config/messages.config.json')
 const { sentryCaptureException } = require('../modules/sentry/sentry.module')
 const { User } = require('../data/models')
-const config = require('../config/application.config')
 /**
  * @swagger
  * tags:
@@ -98,16 +96,17 @@ router.post(
 		try {
 			const result = await User.create({
 				username: req.body.username,
-				password: await bcrypt.hash(req.body.password, config.bcrypt.saltRounds),
+				password: await User.encryptPassword(req.body.password),
 			})
 
 			const user = result.get({ plain: true })
 
-			passport.authenticate('local', () => res.send(user))({
-				body: {
-					username: user.username,
-					password: user.passport,
-				},
+			req.login(user, err => {
+				if (err) {
+					return res.status(403).send({ message: messages.auth.wrong_credentials })
+				}
+
+				res.send(req.user)
 			})
 		} catch (err) {
 			sentryCaptureException(err)

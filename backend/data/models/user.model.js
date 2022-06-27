@@ -1,5 +1,7 @@
 const Sequelize = require('sequelize')
 const { Model } = require('sequelize')
+const bcrypt = require('bcrypt')
+const config = require('../../config/application.config')
 
 module.exports = sequelize => {
 	/**
@@ -42,6 +44,15 @@ module.exports = sequelize => {
 				as: 'todoLists',
 				foreignKey: 'user_id',
 			})
+
+			User.hasMany(models.Todo, {
+				as: 'todos',
+				foreignKey: 'user_id',
+			})
+		}
+
+		static encryptPassword(password) {
+			return bcrypt.hash(password, config.bcrypt.saltRounds)
 		}
 	}
 

@@ -6,9 +6,10 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon run ./server.js",
-    "test": "jest",
-    "migrate": "npx sequelize-cli db:migrate",
-    "seed": "npx sequelize-cli db:seed:all"
+    "test": "NODE_ENV=test npm run drop && NODE_ENV=test npm run migrate && NODE_ENV=test npm run seed && NODE_ENV=test jest --runInBand",
+    "migrate": "npx sequelize-cli db:create && npx sequelize-cli db:migrate",
+    "seed": "npx sequelize-cli db:seed:all",
+    "drop": "npx sequelize-cli db:drop"
   },
   "author": "",
   "license": "ISC",
@@ -29,8 +30,13 @@
     "validatorjs": "^3.22.1"
   },
   "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "jest": "^28.1.1",
     "nodemon": "^2.0.18",
     "sequelize": "^6.21.0",
-    "sequelize-cli": "^6.4.1"
+    "sequelize-cli": "^6.4.1",
+    "superagent": "^8.0.0",
+    "supertest": "^6.2.3"
   }
 }

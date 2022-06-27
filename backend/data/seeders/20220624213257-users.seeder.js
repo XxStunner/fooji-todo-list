@@ -1,5 +1,4 @@
-const bcrypt = require('bcrypt')
-const config = require('../../config/application.config')
+const { User } = require('../models')
 const DATABASE_NAME = 'users'
 
 module.exports = {
@@ -16,7 +15,7 @@ module.exports = {
 		return queryInterface.bulkInsert(DATABASE_NAME, [
 			{
 				username: 'test',
-				password: await bcrypt.hash('123456', config.bcrypt.saltRounds),
+				password: await User.encryptPassword('123456'),
 				created_at: new Date(),
 				updated_at: new Date(),
 			},
