@@ -29,15 +29,7 @@ if (config.app.isDev) {
  * API Security.
  * @see https://helmetjs.github.io
  */
-// const cspDefaults = helmet.contentSecurityPolicy.getDefaultDirectives()
-
-// delete cspDefaults['upgrade-insecure-requests']
-
-// app.use(
-// 	helmet({
-// 		contentSecurityPolicy: { directives: cspDefaults },
-// 	})
-// )
+app.use(helmet())
 /**
  * CORS
  */
@@ -72,10 +64,10 @@ passportLocalModule.setupPassport(passport)
 /**
  * Load all the controllers
  */
-app.use('/auth', AuthController)
-app.use('/docs', DocumentationController)
-app.use('/todo-lists', TodoListsController)
-app.use('/todos', TodosController)
+app.use('/api/auth', AuthController)
+app.use('/api/docs', DocumentationController)
+app.use('/api/todo-lists', TodoListsController)
+app.use('/api/todos', TodosController)
 /**
  * Handle 404 requests.
  */
