@@ -26,8 +26,7 @@ module.exports = {
 		resave: false,
 		saveUninitialized: true,
 		proxy: process.env.NODE_ENV === 'production',
-		cookie: { secure: process.env.NODE_ENV === 'production' },
+		cookie: { secure: false }, // set to false because we needed to change the domain in heroku in order to make it work as a microservice.
 		sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-		httpOnly: true,
 	},
 }
