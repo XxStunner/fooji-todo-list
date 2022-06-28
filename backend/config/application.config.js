@@ -3,7 +3,7 @@ module.exports = {
 		isDev: process.env.NODE_ENV !== 'production',
 		isTest: process.env.NODE_ENV === 'test',
 		port: process.env.PORT || 5000,
-		clientUrl: 'http://localhost:3000',
+		clientUrl: process.env.CLIENT_URL || 'http://localhost:3000',
 	},
 	bcrypt: {
 		saltRounds: 6,
