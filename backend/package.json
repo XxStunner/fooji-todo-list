@@ -27,14 +27,14 @@
     "passport-local": "^1.0.0",
     "swagger-jsdoc": "^6.2.1",
     "swagger-ui-express": "^4.4.0",
-    "validatorjs": "^3.22.1"
+    "validatorjs": "^3.22.1",
+    "sequelize": "^6.21.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "jest": "^28.1.1",
     "nodemon": "^2.0.18",
-    "sequelize": "^6.21.0",
     "sequelize-cli": "^6.4.1",
     "superagent": "^8.0.0",
     "supertest": "^6.2.3"
