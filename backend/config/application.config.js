@@ -27,7 +27,7 @@ module.exports = {
 		saveUninitialized: true,
 		proxy: process.env.NODE_ENV === 'production',
 		cookie: { secure: process.env.NODE_ENV === 'production' },
-		sameSite: 'none',
+		sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
 		httpOnly: true,
 	},
 }
