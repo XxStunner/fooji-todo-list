@@ -45,6 +45,10 @@ app.use(
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 /**
+ * Necessary to use heroku
+ */
+app.set('trust proxy', 1)
+/**
  * Init session
  */
 app.use(session(config.session))

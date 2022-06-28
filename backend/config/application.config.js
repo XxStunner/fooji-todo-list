@@ -25,6 +25,7 @@ module.exports = {
 		secret: 'vuvYaeiUh$CwlWuVDfqKNSvtwq60SCkPL3h!u#',
 		resave: false,
 		saveUninitialized: true,
-		cookie: { secure: false },
+		proxy: process.env.NODE_ENV === 'production',
+		cookie: { secure: process.env.NODE_ENV === 'production' },
 	},
 }
