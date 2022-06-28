@@ -31,10 +31,10 @@ const authorizationMiddleware = require('../middlewares/authorization.middleware
  *     description: Return all the todoLists created by the logged user.
  *     tags: [TodoLists]
  *     parameters:
- *       - in: currentPage
- *         name: currentPage
+ *       - in: offset
+ *         name: offset
  *         type: integer
- *         description: The current page of the pagination.
+ *         description: The id of the last item
  *       - in: limit
  *         name: limit
  *         type: integer
@@ -55,8 +55,8 @@ router.get('/', authorizationMiddleware.isAuthenticated, async (req, res) => {
 			where: {
 				user_id: req.user.id,
 			},
-			offset: Number.isInteger(req.query.currentPage) ? Number(req.query.currentPage) : 0,
-			limit: Number.isInteger(req.query.limit) ? Number(req.query.limit) : 10,
+			offset: !isNaN(req.query.offset) ? Number(req.query.offset) : 0,
+			limit: !isNaN(req.query.limit) ? Number(req.query.limit) : 10,
 			include: [
 				{
 					model: Todo,

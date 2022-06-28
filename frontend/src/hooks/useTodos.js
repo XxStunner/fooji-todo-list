@@ -1,17 +1,9 @@
-import { useState, useEffect } from 'react'
 import { api } from './useAxios'
 
 export const useTodos = () => {
-	const [todos, setTodos] = useState({
-		count: 0,
-		rows: [],
-	})
-
-	useEffect(() => {
-		api.get('todos').then(({ data }) => {
-			setTodos(data)
-		})
-	}, [])
+	const getTodos = (offset, limit = 10) => {
+		return api.get(`todos?offset=${offset}&limit=${limit}`).then(({ data }) => data)
+	}
 
 	const createTodo = todoListData => {
 		return api.post('todos', todoListData)
@@ -26,8 +18,7 @@ export const useTodos = () => {
 	}
 
 	return {
-		todos,
-		setTodos,
+		getTodos,
 		createTodo,
 		editTodo,
 		deleteTodo,

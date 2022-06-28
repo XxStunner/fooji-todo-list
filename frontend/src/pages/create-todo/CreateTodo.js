@@ -2,15 +2,19 @@ import { useTodoLists } from '../../hooks/useTodoLists'
 import { useTodos } from '../../hooks/useTodos'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '../../components/Button'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Arrow from '../../components/icons/Arrow'
 
 export default function CreateTodo() {
-	const { todoLists } = useTodoLists()
-	const { createTodo } = useTodos()
-	const navigate = useNavigate()
+	const [todoLists, setTodoLists] = useState({
+		count: 0,
+		rows: [],
+	})
 	const [todoTitle, setTodoTitle] = useState('')
 	const [todoListId, setTodoListId] = useState(todoLists.rows.length ? todoLists.rows[0] : 0)
+	const navigate = useNavigate()
+	const { createTodo } = useTodos()
+	const { getTodoLists } = useTodoLists()
 
 	const handleCreateTodoForm = async event => {
 		event.preventDefault()
@@ -22,6 +26,10 @@ export default function CreateTodo() {
 
 		navigate('/')
 	}
+
+	useEffect(() => {
+		getTodoLists(1, 100).then(setTodoLists)
+	}, [setTodoLists])
 
 	return (
 		<div className="p-8">

@@ -16,13 +16,13 @@ export function Todo({ todo, onDeleteTodo = () => {} }) {
 		onDeleteTodo(todo.id)
 	}
 
-	const handleSetDoneTodo = () => {
-		setTodoDone(!todoDone)
-
-		editTodo({
+	const handleSetDoneTodo = async () => {
+		await editTodo({
 			...todo,
-			done: todoDone,
+			done: !todoDone,
 		})
+
+		setTodoDone(!todoDone)
 	}
 
 	const handleEditTodo = async () => {
@@ -48,7 +48,7 @@ export function Todo({ todo, onDeleteTodo = () => {} }) {
 		<li className="font-bold text-sm text-white" key={todo.id}>
 			<div
 				className={`flex items-center gap-2 p-2 rounded-t justify-between ${
-					todoDone ? 'bg-green-600' : 'bg-blue-600'
+					todoDone ? 'bg-green-600' : 'bg-gray-200 text-gray-800'
 				}`}
 			>
 				<div>
@@ -63,7 +63,7 @@ export function Todo({ todo, onDeleteTodo = () => {} }) {
 						todoTitle
 					)}
 				</div>
-				<button className="text-white" type="submit" onClick={handleEditTodo}>
+				<button className={todoDone ? 'text-white' : 'text-gray-800'} type="submit" onClick={handleEditTodo}>
 					<Pencil />
 				</button>
 			</div>

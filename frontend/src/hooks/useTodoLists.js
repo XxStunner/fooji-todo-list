@@ -1,17 +1,9 @@
-import { useState, useEffect } from 'react'
 import { api } from './useAxios'
 
 export const useTodoLists = () => {
-	const [todoLists, setTodoLists] = useState({
-		count: 0,
-		rows: [],
-	})
-
-	useEffect(() => {
-		api.get('todo-lists').then(({ data }) => {
-			setTodoLists(data)
-		})
-	}, [])
+	const getTodoLists = (offset, limit = 10) => {
+		return api.get(`todo-lists?offset=${offset}&limit=${limit}`).then(({ data }) => data)
+	}
 
 	const createTodoList = todoListData => {
 		return api.post('todo-lists', todoListData)
@@ -26,8 +18,7 @@ export const useTodoLists = () => {
 	}
 
 	return {
-		todoLists,
-		setTodoLists,
+		getTodoLists,
 		createTodoList,
 		editTodoList,
 		deleteTodoList,
