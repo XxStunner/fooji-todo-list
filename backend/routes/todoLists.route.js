@@ -126,7 +126,7 @@ router.post(
  *               $ref: '#/components/schemas/TodoList'
  */
 router.get(
-	':id',
+	'/:id',
 	authorizationMiddleware.isAuthenticated,
 	todoListMiddleware.getTodoList,
 	todoListMiddleware.authorizeTodoListEdit,
@@ -161,7 +161,7 @@ router.get(
  *               $ref: '#/components/schemas/TodoList'
  */
 router.put(
-	':id',
+	'/:id',
 	validateFieldsMiddleware(todoListFieldsValidator),
 	authorizationMiddleware.isAuthenticated,
 	todoListMiddleware.getTodoList,
@@ -191,7 +191,7 @@ router.put(
  *         description: Success response indicating that the todoList has been deleted.
  */
 router.delete(
-	':id',
+	'/:id',
 	authorizationMiddleware.isAuthenticated,
 	todoListMiddleware.getTodoList,
 	todoListMiddleware.authorizeTodoListEdit,

@@ -1,17 +1,35 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import { api } from './useAxios'
 
-export const useUser = () => {
-	const [user, setUser] = useState(null)
+export const useTodoLists = () => {
+	const [todoLists, setTodoLists] = useState({
+		count: 0,
+		rows: [],
+	})
 
 	useEffect(() => {
-		axios.get('http://localhost:5000/todo-lists').then(({ data }) => {
-			console.log(data)
+		api.get('todo-lists').then(({ data }) => {
+			setTodoLists(data)
 		})
 	}, [])
 
+	const createTodoList = todoListData => {
+		return api.post('todo-lists', todoListData)
+	}
+
+	const editTodoList = todoListData => {
+		return api.put(`todo-lists/${todoListData.id}`, todoListData)
+	}
+
+	const deleteTodoList = todoListId => {
+		return api.delete(`todo-lists/${todoListId}`)
+	}
+
 	return {
-		user,
-		setUser,
+		todoLists,
+		setTodoLists,
+		createTodoList,
+		editTodoList,
+		deleteTodoList,
 	}
 }

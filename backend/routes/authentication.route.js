@@ -126,7 +126,7 @@ router.post(
  *             schema:
  *               $ref: '#/components/schemas/AuthenticationResponse'
  */
-router.get('/me', authorizationMiddleware.isAuthenticated, () => {
+router.get('/me', authorizationMiddleware.isAuthenticated, (req, res) => {
 	res.send(req.user)
 })
 

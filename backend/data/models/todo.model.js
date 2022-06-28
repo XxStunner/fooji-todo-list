@@ -21,6 +21,10 @@ module.exports = sequelize => {
 	 *           type: string
 	 *           description: The title of the todo.
 	 *           example: Study solidity
+	 *         done:
+	 *           type: boolean
+	 *           description: Boolean that defines if the todo it's done.
+	 *           example: false
 	 *         createdAt:
 	 *           type: string
 	 *           description: The date where the todo was created.
@@ -65,6 +69,10 @@ module.exports = sequelize => {
 			title: {
 				type: Sequelize.STRING,
 				allowNull: false,
+			},
+			done: {
+				type: Sequelize.BOOLEAN,
+				defaultValue: false,
 			},
 			createdAt: {
 				field: 'created_at',

@@ -1,15 +1,16 @@
-import axios from 'axios'
-import { createContext, useState } from 'react'
+import { createContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { api } from '../hooks/useAxios'
 
 export const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {
 	const [user, setUser] = useState(null)
+	const [isLoadingForTheFirstTime, setIsLoadingForTheFirstTime] = useState(true)
 	const navigate = useNavigate()
 
 	const handleLogin = async loginData => {
-		const loggedUser = await axios.post('http://localhost:5000/auth/login', loginData).then(({ data }) => data)
+		const loggedUser = await api.post('auth/login', loginData).then(({ data }) => data)
 
 		setUser(loggedUser)
 
@@ -17,7 +18,7 @@ export function AuthProvider({ children }) {
 	}
 
 	const handleRegister = async loginData => {
-		const loggedUser = await axios.post('http://localhost:5000/auth/register', loginData).then(({ data }) => data)
+		const loggedUser = await api.post('auth/register', loginData).then(({ data }) => data)
 
 		setUser(loggedUser)
 
@@ -30,8 +31,20 @@ export function AuthProvider({ children }) {
 		navigate('/login')
 	}
 
+	useEffect(() => {
+		if (isLoadingForTheFirstTime) {
+			api.get('auth/me')
+				.then(({ data }) => {
+					setUser(data)
+					setIsLoadingForTheFirstTime(false)
+				})
+				.catch(() => setIsLoadingForTheFirstTime(false))
+		}
+	}, [isLoadingForTheFirstTime])
+
 	const value = {
 		user,
+		isLoadingForTheFirstTime,
 		handleLogin,
 		handleRegister,
 		handleLogout,

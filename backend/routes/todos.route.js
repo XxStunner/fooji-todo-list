@@ -125,7 +125,7 @@ router.post(
  *               $ref: '#/components/schemas/Todo'
  */
 router.get(
-	':id',
+	'/:id',
 	authorizationMiddleware.isAuthenticated,
 	todoMiddleware.getTodo,
 	todoMiddleware.authorizeTodoEdit,
@@ -160,7 +160,7 @@ router.get(
  *               $ref: '#/components/schemas/Todo'
  */
 router.put(
-	':id',
+	'/:id',
 	validateFieldsMiddleware(todoFieldsValidator),
 	authorizationMiddleware.isAuthenticated,
 	todoMiddleware.getTodo,
@@ -192,7 +192,7 @@ router.put(
  *         description: Success response indicating that the todo has been deleted.
  */
 router.delete(
-	':id',
+	'/:id',
 	authorizationMiddleware.isAuthenticated,
 	todoMiddleware.getTodo,
 	todoMiddleware.authorizeTodoEdit,
