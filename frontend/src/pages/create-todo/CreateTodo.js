@@ -28,7 +28,7 @@ export default function CreateTodo() {
 	}
 
 	useEffect(() => {
-		getTodoLists(1, 100).then(setTodoLists)
+		getTodoLists(0, 100).then(setTodoLists)
 	}, [setTodoLists])
 
 	return (
