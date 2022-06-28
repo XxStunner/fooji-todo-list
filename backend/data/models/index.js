@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize')
 const config = require('../../config/application.config')
-const databaseConfig = require('../../config/database.config.json')
+const databaseConfig = require('../../config/database.config')
 
 const sequelize = new Sequelize(
 	config.app.isDev
