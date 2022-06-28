@@ -29,15 +29,15 @@ if (config.app.isDev) {
  * API Security.
  * @see https://helmetjs.github.io
  */
-const cspDefaults = helmet.contentSecurityPolicy.getDefaultDirectives()
+// const cspDefaults = helmet.contentSecurityPolicy.getDefaultDirectives()
 
-delete cspDefaults['upgrade-insecure-requests']
+// delete cspDefaults['upgrade-insecure-requests']
 
-app.use(
-	helmet({
-		contentSecurityPolicy: { directives: cspDefaults },
-	})
-)
+// app.use(
+// 	helmet({
+// 		contentSecurityPolicy: { directives: cspDefaults },
+// 	})
+// )
 /**
  * CORS
  */
